@@ -1,0 +1,17 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    Mikamatto\EntityTargetingBundle\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    # Enable automatic tagging for criteria classes
+    Mikamatto\EntityTargetingBundle\TargetingCriteria\:
+        resource: '../src/TargetingCriteria/*'
+        tags: ['app.targeting_criterion']
+
+    Mikamatto\EntityTargetingBundle\TargetCriteriaFactory:
+        arguments:
+            $criteria: !tagged_iterator 'app.targeting_criterion'
