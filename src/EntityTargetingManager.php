@@ -11,13 +11,13 @@ use Symfony\Contracts\Cache\ItemInterface;
 class EntityTargetingManager {
 
     private ?CriteriaRepositoryInterface $repository = null; 
-    private bool $cacheEnabled = true;       // Injected from config
-    private ?int $cacheExpiration = 3600;  // Default fallback
 
     public function __construct(
         private TargetCriteriaFactory $criteriaFactory,
         private CacheInterface $cache, 
-        private EntityManagerInterface $em
+        private EntityManagerInterface $em,
+        private bool $cacheEnabled,
+        private ?int $cacheExpiration
     ) {}
 
     /**

@@ -15,3 +15,8 @@ services:
     Mikamatto\EntityTargetingBundle\TargetCriteriaFactory:
         arguments:
             $criteria: !tagged_iterator 'app.targeting_criterion'
+
+    Mikamatto\EntityTargetingBundle\EntityTargetingManager:
+        arguments:
+            $cacheEnabled: '%mikamatto_entity_targeting.enable_cache%'
+            $cacheExpiration: '%mikamatto_entity_targeting.cache_expiration%'
