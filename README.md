@@ -54,14 +54,23 @@ namespace Mikamatto\EntityTargetingBundle\Entity;
 
 interface CriteriaAwareInterface
 {
-    public function getCriterion(): ?string;
+    public function getCriterion(): string;
+    public function setCriterion(string $criterion): self;
     public function getCriterionParams(): array;
+    public function setCriterionParams(?string $params): self;
+    public function getRepository(): CriteriaRepositoryInterface;
 }
 ```
 - **getCriterion()**: string
-This method should return the label or name of a criterion that applies to the entity. The label should match a criterion registered with the bundle, such as `guests_only` or`user_roles` (or any custom criteria you define). For example:
+This method returns the label or name of a criterion that applies to the entity. The label should match a criterion registered with the bundle, such as `guests_only` or`user_roles` (or any custom criteria you define).
+- **setCriterion(string $criterion)**: self
+Setter method for the above property.
 - **getCriterionParams()**: array
 This method should return an associative array of parameters expected by the selected criterion. The values in this array configure how the criterion will be applied to the entity and depend on the specific criterion.
+- **setCriterionParams(?string $params)**: self
+Setter method for the criterion parameters. Its value must be passed as a string matching a valid JSON structure. 
+- **getRepository()**: CriteriaRepositoryInterface
+Allows to easily retrieve the repository for the managed entity.
 
 
 ### CriteriaRepositoryInterface
@@ -90,6 +99,8 @@ interface TargetCriteriaInterface
     public function supports(string $targetAudience): bool;
 
     public function getCriterionName(): string;
+
+    public function getCriterionDescription(): ?string;
 }
 ```
 
@@ -99,6 +110,7 @@ interface TargetCriteriaInterface
 - `isEligible(?UserInterface $user, CriteriaAwareInterface $entity)`: bool: Determines if the entity is eligible based on the criterion’s parameters and any relevant user attributes. This method drives the core eligibility check for an entity and user.
 - `supports(string $targetAudience)`: bool: Verifies if the criterion supports the provided audience target, helping to match criteria with specific entity types or conditions.
 - `getCriterionName()`: string: Provides a unique identifier for the criterion, used for associating criteria with entities in a consistent and meaningful way.
+- `getCriterionDescription()`: ?string: Provides a text description for the criterion, if available.
 
 This interface enables the definition of reusable, custom criteria within the bundle, while still supporting native, configurable criteria like `guests_only` and `user_roles`.
 
@@ -193,6 +205,52 @@ class CustomCriterion implements TargetCriteriaInterface
     }
 }
 ```
+# List Registered Criteria
+
+In order to list all the available criteria (for example, for populating a selector with options), a service which returns an array of the objects tagged as app.targeting_criterion is available at `Mikamatto\EntityTargetingBundle\Service\TargetingCriteriaProvider`
+
+The TargetingCriteriaProvider service enables you to retrieve a list of registered targeting criteria in a structured format, which is helpful for managing and displaying available criteria options within your application.
+
+This service leverages the `#[AutowireIterator]` attribute to automatically inject all services tagged with `app.targeting_criterion`, making it easy to register and retrieve criteria dynamically.
+
+## Usage
+To use this service, ensure that your criteria classes are tagged with app.targeting_criterion in the service configuration:
+```yaml
+# config/services.yaml
+App\Targeting\Criterion\YourCriterionClass:
+    tags: ['app.targeting_criterion']
+```
+The `listCriteria()` method on TargetingCriteriaProvider returns all registered criteria as an array, with each criterion containing:
+- **name**: The unique name of the criterion.
+- **class**: The class name of the criterion.
+- **description**: A brief description of the criterion.
+```php
+// Example usage
+$criteriaProvider = $container->get(TargetingCriteriaProvider::class);
+$criteriaList = $criteriaProvider->listCriteria();
+
+foreach ($criteriaList as $criterion) {
+    echo "Name: " . $criterion['name'] . "\n";
+    echo "Class: " . $criterion['class'] . "\n";
+    echo "Description: " . $criterion['description'] . "\n\n";
+}
+```
+Example output:
+```json
+[
+    {
+        "name": "LocationCriterion",
+        "class": "App\\Targeting\\Criterion\\LocationCriterion",
+        "description": "Filters users based on their location."
+    },
+    {
+        "name": "AgeCriterion",
+        "class": "App\\Targeting\\Criterion\\AgeCriterion",
+        "description": "Filters users based on their age."
+    }
+]
+```
+This service provides a consistent and extensible way to manage and display all available targeting criteria within the application. By adding new criteria classes and tagging them with `app.targeting_criterion`, they will automatically be included in the output from listCriteria() without any additional configuration.
 
 # Example Usage
 

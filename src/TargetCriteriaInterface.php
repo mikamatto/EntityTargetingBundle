@@ -38,4 +38,11 @@ interface TargetCriteriaInterface
      * @return string
      */
     public function getCriterionName(): string;
+
+    /**
+     * Retrieves the description of the current criterion
+     *
+     * @return string
+     */
+    public function getCriterionDescription(): ?string;
 }

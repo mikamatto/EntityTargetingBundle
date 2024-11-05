@@ -4,10 +4,8 @@ namespace Mikamatto\EntityTargetingBundle\TargetingCriteria;
 
 use Mikamatto\EntityTargetingBundle\TargetCriteriaInterface;
 use Mikamatto\EntityTargetingBundle\Entity\CriteriaAwareInterface;
-use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[AsTaggedItem('app.audience_criterion')]
 class GuestsOnlyCriterion implements TargetCriteriaInterface
 {
     public function setParameters(array $parameters): void
@@ -27,5 +25,10 @@ class GuestsOnlyCriterion implements TargetCriteriaInterface
     public function getCriterionName(): string
     {
         return 'guests_only';
+    }
+
+    public function getCriterionDescription(): ?string
+    {
+        return 'Targets only users who are not logged in';
     }
 }

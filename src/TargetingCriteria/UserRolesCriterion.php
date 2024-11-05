@@ -4,11 +4,9 @@ namespace Mikamatto\EntityTargetingBundle\TargetingCriteria;
 
 use Mikamatto\EntityTargetingBundle\TargetCriteriaInterface;
 use Mikamatto\EntityTargetingBundle\Entity\CriteriaAwareInterface;
-use Symfony\Component\DependencyInjection\Attribute\AsTaggedItem;
 use Symfony\Component\Security\Core\Role\RoleHierarchyInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-#[AsTaggedItem('app.audience_criterion')]
 class UserRolesCriterion implements TargetCriteriaInterface
 {
     private array $roles;
@@ -56,5 +54,10 @@ class UserRolesCriterion implements TargetCriteriaInterface
     public function getCriterionName(): string
     {
         return 'user_roles';
+    }
+
+    public function getCriterionDescription(): ?string
+    {
+        return 'Targets authenticated users based on their roles';
     }
 }
