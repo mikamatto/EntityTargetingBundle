@@ -2,9 +2,13 @@
 
 namespace Mikamatto\EntityTargetingBundle\Service;
 
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
+
 class TargetingCriteriaProvider
 {
-    public function __construct(private iterable $criteria) 
+    public function __construct(
+        #[AutowireIterator(tag: 'app.targeting_criterion')] private iterable $criteria
+        ) 
     {
     }
 
@@ -12,7 +16,7 @@ class TargetingCriteriaProvider
     {
         $criteriaList = [];
         foreach ($this->criteria as $criterion) {
-            $choices[$criterion->getCriterionName()] = [
+            $criteriaList[$criterion->getCriterionName()] = [
                 'name' => $criterion->getCriterionName(),
                 'class' => get_class($criterion),
                 'description' => $criterion->getCriterionDescription(),
