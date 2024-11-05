@@ -18,7 +18,7 @@ class TargetingCriteriaProvider
             $choices[$criterion->getCriterionName()] = [
                 'name' => $criterion->getCriterionName(),
                 'class' => get_class($criterion),
-                'description' => $criterion->getDescription(),
+                'description' => $criterion->getCriterionDescription(),
             ];
         }
         return $criteriaList;
