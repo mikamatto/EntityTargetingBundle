@@ -58,7 +58,6 @@ interface CriteriaAwareInterface
     public function setCriterion(string $criterion): self;
     public function getCriterionParams(): array;
     public function setCriterionParams(?string $params): self;
-    public function getRepository(): CriteriaRepositoryInterface;
 }
 ```
 - **getCriterion()**: string
@@ -69,8 +68,6 @@ Setter method for the above property.
 This method should return an associative array of parameters expected by the selected criterion. The values in this array configure how the criterion will be applied to the entity and depend on the specific criterion.
 - **setCriterionParams(?string $params)**: self
 Setter method for the criterion parameters. Its value must be passed as a string matching a valid JSON structure. 
-- **getRepository()**: CriteriaRepositoryInterface
-Allows to easily retrieve the repository for the managed entity.
 
 
 ### CriteriaRepositoryInterface

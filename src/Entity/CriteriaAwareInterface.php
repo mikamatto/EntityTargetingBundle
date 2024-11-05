@@ -34,11 +34,4 @@ interface CriteriaAwareInterface {
      * @return self
      */
     public function setCriterionParams(?string $params): self;
-
-    /**
-     * Retrieves the repository for the current entity
-     *
-     * @return CriteriaRepositoryInterface
-     */
-    public function getRepository(): CriteriaRepositoryInterface;
 }
