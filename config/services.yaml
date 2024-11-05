@@ -20,7 +20,7 @@ services:
         arguments:
             $cacheEnabled: '%mikamatto_entity_targeting.enable_cache%'
             $cacheExpiration: '%mikamatto_entity_targeting.cache_expiration%'
-            
+
     Mikamatto\EntityTargetingBundle\Service\TargetingCriteriaProvider:
         arguments:
-            $criteria: !tagged_iterator app.targeting_criterion
+            $criteria: !tagged_iterator 'app.targeting_criterion'
