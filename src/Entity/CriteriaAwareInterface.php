@@ -6,19 +6,19 @@ use Mikamatto\EntityTargetingBundle\Repository\CriteriaRepositoryInterface;
 
 interface CriteriaAwareInterface {
     /**
-     * Retrieves the criterion name for targeting the current entity
+     * Retrieves the criterion name for targeting the current entity, or null if none is set
      *
      * @return string|null
      */
-    public function getCriterion(): string;
+    public function getCriterion(): ?string;
 
     /**
      * Sets the criterion name for targeting the current entity
      *
-     * @param string $criterion - The criterion name
+     * @param string $criterion - The criterion name or null
      * @return self
      */
-    public function setCriterion(string $criterion): self;
+    public function setCriterion(?string $criterion): self;
 
     /**
      * Retrieves the criterion parameters (if any) for targeting the current entity
