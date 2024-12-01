@@ -2,8 +2,6 @@
 
 namespace Mikamatto\EntityTargetingBundle\Entity;
 
-use Mikamatto\EntityTargetingBundle\Repository\CriteriaRepositoryInterface;
-
 interface CriteriaAwareInterface {
     /**
      * Retrieves the criterion name for targeting the current entity, or null if none is set
