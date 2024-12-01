@@ -48,20 +48,20 @@ class EntityTargetingManager {
      * @param UserInterface|null $user
      * @return array
      */
-    public function getTargetedEntities(?UserInterface $user): array {
+    public function getTargetedEntities(?UserInterface $user, array $params = []): array {
         if ($this->repository === null) {
             throw new \LogicException('Repository has not been set.');
         }
 
         if (!$this->cacheEnabled) {
             // No caching - just retrieve directly
-            return $this->retrieveTargetedEntities($user);
+            return $this->retrieveTargetedEntities($user, $params);
         }
     
         // Caching enabled - use cache with configured expiration
-        return $this->cache->get('targeted_entities', function (ItemInterface $item) use ($user) {
+        return $this->cache->get('targeted_entities', function (ItemInterface $item) use ($user, $params) {
             $item->expiresAfter($this->cacheExpiration);
-            return $this->retrieveTargetedEntities($user);
+            return $this->retrieveTargetedEntities($user, $params);
         });
     }
 
@@ -80,9 +80,9 @@ class EntityTargetingManager {
      * @param UserInterface|null $user
      * @return array
      */
-    private function retrieveTargetedEntities(?UserInterface $user): array
+    private function retrieveTargetedEntities(?UserInterface $user, array $params = []): array
     {
-        $entities = $this->repository->getEntities();
+        $entities = $this->repository->getEntities($params);
 
         return array_filter($entities, function ($entity) use ($user) {
             $criterion = $entity->getCriterion();
