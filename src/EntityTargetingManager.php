@@ -78,6 +78,7 @@ class EntityTargetingManager {
      * Retrieves the targeted entities based on the criteria that apply.
      *
      * @param UserInterface|null $user
+     * @param array $params - Any custom parameters to pass to the repository
      * @return array
      */
     private function retrieveTargetedEntities(?UserInterface $user, array $params = []): array

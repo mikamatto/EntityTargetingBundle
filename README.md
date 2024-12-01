@@ -43,6 +43,43 @@ entity_targeting:
     cache_expiration: 3600  # Default cache expiration time in seconds
 ```
 
+### Example usage
+Using the bundle is extremely simple:
+- Inject the service;
+- Connect the repository;
+- Find all the entities which target the user.
+
+Here's a basic example using a standard service class:
+
+```php
+use App\Entity\Base\Announcement;
+use App\Repository\Base\AnnouncementRepository;
+use Mikamatto\EntityTargetingBundle\EntityTargetingManager;
+use Symfony\Bundle\SecurityBundle\Security;
+
+class ExampleService
+{
+    public function __construct(
+        private EntityTargetingManager $entityTargetingManager, 
+        private AnnouncementRepository $announcementRepository,
+        private Security $security, 
+        )
+    {
+        // Don't forget to set the repository for the targeted entity
+        $this->entityTargetingManager->setRepository(Announcement::class);
+    }
+
+    public function example(array $params = []): string
+    {
+        $user = $this->security->getUser();
+        $announcements = $this->entityTargetingManager->getTargetedEntities($user, $params);
+
+        // Here we have all the entities which apply to $user. Job done
+   ```
+We can pass in any custom params which will be passed into the repository method `getEntities()`.
+
+
+
 ## Interfaces
 
 ### CriteriaAwareInterface
@@ -54,18 +91,18 @@ namespace Mikamatto\EntityTargetingBundle\Entity;
 
 interface CriteriaAwareInterface
 {
-    public function getCriterion(): string;
-    public function setCriterion(string $criterion): self;
-    public function getCriterionParams(): array;
+    public function getCriterion(): ?string;
+    public function setCriterion(?string $criterion): self;
+    public function getCriterionParams(): ?array;
     public function setCriterionParams(?string $params): self;
 }
 ```
-- **getCriterion()**: string
-This method returns the label or name of a criterion that applies to the entity. The label should match a criterion registered with the bundle, such as `guests_only` or`user_roles` (or any custom criteria you define).
-- **setCriterion(string $criterion)**: self
+- **getCriterion()**: ?string
+This method returns the label or name of a criterion that applies to the entity, if set. The label should match a criterion registered with the bundle, such as `guests_only` or`user_roles` (or any custom criteria you define).
+- **setCriterion(?string $criterion)**: self
 Setter method for the above property.
-- **getCriterionParams()**: array
-This method should return an associative array of parameters expected by the selected criterion. The values in this array configure how the criterion will be applied to the entity and depend on the specific criterion.
+- **getCriterionParams()**: ?array
+This method should return an associative array of parameters expected by the selected criterion, if any. The values in this array configure how the criterion will be applied to the entity and depend on the specific criterion.
 - **setCriterionParams(?string $params)**: self
 Setter method for the criterion parameters. Its value must be passed as a string matching a valid JSON structure. 
 
@@ -74,12 +111,14 @@ Setter method for the criterion parameters. Its value must be passed as a string
 
 The `CriteriaRepositoryInterface` allows for repository classes to be compatible with the EntityTargetingBundle. Any repository managing entities targeted by this bundle should implement this interface, ensuring the bundle can fetch entities based on criteria configurations seamlessly.
 
+Any custom parameters can be passed into the `$params` array.
+
 ```php
 namespace Mikamatto\EntityTargetingBundle\Repository;
 
 interface CriteriaRepositoryInterface
 {
-    public function getEntities(): array;  // Method to fetch active entities
+    public function getEntities(array $params = []): array;  // Method to fetch active entities
 }
 ```
 ### TargetCriteriaInterface
