@@ -10,7 +10,7 @@ By using this bundle, you can assign criteria to each message without writing ex
 
 ## Features
 - Flexible Entity Management: The bundle allows you to manage a variety of entities based on user-defined criteria, ensuring that your application can cater to different audiences without hardcoding logic.
-- Native Criteria Support: Comes with pre-defined criteria such as `guests_only` and `user_roles`, which can be easily applied to your entities to control visibility based on user status and roles.
+- Native Criteria Support: Comes with pre-defined criteria such as `guests_only`, `user_roles`, and `user_id`, which can be easily applied to your entities to control visibility based on user status, roles, or specific user IDs.
 - Custom Criteria Creation: You can easily create your own criteria by implementing the provided `TargetCriteriaInterface`. This allows for endless customization tailored to your application's needs.
 - Caching Mechanism: The bundle includes an optional caching layer to improve performance, enabling faster access to targeted entities. The caching duration can be configured via the application's configuration files.
 - Decoupled Architecture: Designed for maximum decoupling, the bundle allows developers to provide entities and CRUD operations independently, promoting a clean separation of concerns within the application.
@@ -98,7 +98,7 @@ interface CriteriaAwareInterface
 }
 ```
 - **getCriterion()**: ?string
-This method returns the label or name of a criterion that applies to the entity, if set. The label should match a criterion registered with the bundle, such as `guests_only` or`user_roles` (or any custom criteria you define).
+This method returns the label or name of a criterion that applies to the entity, if set. The label should match a criterion registered with the bundle, such as `guests_only`, `user_roles`, or `user_id` (or any custom criteria you define).
 - **setCriterion(?string $criterion)**: self
 Setter method for the above property.
 - **getCriterionParams()**: ?array
@@ -148,7 +148,7 @@ interface TargetCriteriaInterface
 - `getCriterionName()`: string: Provides a unique identifier for the criterion, used for associating criteria with entities in a consistent and meaningful way.
 - `getCriterionDescription()`: ?string: Provides a text description for the criterion, if available.
 
-This interface enables the definition of reusable, custom criteria within the bundle, while still supporting native, configurable criteria like `guests_only` and `user_roles`.
+This interface enables the definition of reusable, custom criteria within the bundle, while still supporting native, configurable criteria like `guests_only`, `user_roles`, and `user_id`.
 
 # Natively Available Criteria
 
@@ -172,6 +172,15 @@ The `user_roles` criterion targets users based on their assigned roles, with an 
     	- ALL: The user must have all of the specified roles.
     	- ANY: The user must have at least one of the specified roles.
 	- **hierarchy** (boolean, default true): If true, Symfony’s role hierarchy will be used to check if the user has inherited roles (e.g., a user with ROLE_SUPER_ADMIN would satisfy a check for ROLE_ADMIN). If false, only the user’s explicitly assigned roles will be considered.
+
+
+## User ID Criterion
+
+The `user_id` criterion targets a specific user based on their unique identifier.
+
+- Label: **user_id**
+- Parameters:
+	- **user_id** (int): The unique ID of the user to target. Only the user with this exact ID will be eligible.
 
 # Define Your Own Custom Made Criteria
 
@@ -330,6 +339,15 @@ $notification = new Notification(
     [
         'roles' => ['ROLE_ADMIN', 'ROLE_MANAGER'],
         'mode' => 'ANY'
+    ]
+);
+```
+Example of a CriterionAware entity targeting a specific user by ID:
+```php
+$notification = new Notification(
+    'user_id',
+    [
+        'user_id' => 42
     ]
 );
 ```
